@@ -1,7 +1,6 @@
 package pmap
 
 import (
-	"fmt"
 	"sync"
 )
 
@@ -53,34 +52,8 @@ func Reduce[T any](f func(T, T) T, input []T, threads int) T {
 	if len(input) > 0 {
 		out = input[0]
 	}
-	for _, val := range input {
+	for _, val := range input[1:] {
 		out = f(out, val)
 	}
 	return out
-}
-
-type Person struct {
-	Name string
-	Height float64
-}
-
-type People []Person
-
-func (p People) MapToFloat(f func(Person)float64) []float64 {
-	run := func(per Person) float64 {
-		return per.Height
-	}
-	return Map(run, p, 100)
-}
-
-func main() {
-	people := People{Person{"Jim", 74}, Person{"Lolo", 69}, Person{"Jones", 19}, Person{"Jupy", 17}}
-
-	heights2 := Map(func(p Person) float64 {return p.Height + 9000}, people, 1000)
-	fmt.Println(heights2)
-
-	fmt.Println(people.MapToFloat(func(p Person)float64{return p.Height+48}))
-
-	fmt.Println(Filter(func(p Person)bool{return p.Height>50}, people, 1000))
-
 }
